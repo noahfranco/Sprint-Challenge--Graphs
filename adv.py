@@ -8,6 +8,34 @@ from ast import literal_eval
 # Load world
 world = World()
 
+# our Stack for our dft
+class Stack():
+    def __init__(self):
+        self.stack = []
+    def push(self, value):
+        self.stack.append(value)
+    def pop(self):
+        if self.size() > 0:
+            return self.stack.pop()
+        else:
+            return None
+    def size(self):
+        return len(self.stack)
+
+# our Queue for our bfs
+class Queue():
+    def __init__(self):
+        self.queue = []
+    def enqueue(self, value):
+        self.queue.append(value)
+    def dequeue(self):
+        if self.size() > 0:
+            return self.queue.pop(0)
+        else:
+            return None
+    def size(self):
+        return len(self.queue)
+
 
 # You may uncomment the smaller graphs for development and testing purposes.
 # map_file = "maps/test_line.txt"
@@ -27,20 +55,38 @@ player = Player(world.starting_room)
 
 # Fill this out with directions to walk
 # traversal_path = ['n', 'n']
+traversal_path = []
 
 # *** understand ***
 # I need to to find the current room
+# I am going to use depth-first traversal (dft) to iterate through our rooms 
+# Once we hit a node with a dead end I want to pop() of the top of the stack wwitch are the nodes that have already been loop through back to the begining of the stack (the first node I loop through) 
+# I want to find the closes room that hasn’t been iterate through using bfs from that first node (the current node we are on)
 
-# I am going to use depth-first traversal (dft) to loop through our rooms 
+# *** Plan ***
+# Create a dft function 
+# Create a stack to add our nodes that are being iterated through into
+# Push our starting node since we've been to it into the stack
+# create a variable called visited and assign set() to it so we can call visited nodes
+# Loop through our stack = ps: the nodes that are being iterated through 
+# creating a varibale called current_node so once we are on our current node we can pop() it from our stack
+# 
 
-# Once we hit a dead end 
+def dft(self, starting_node):
+    stack = Stack() 
+    
+    stack.push(starting_node)
 
-# I want to find the closes room that hasn’t been loop through using bfs from that dead end node
+    visited = set()
 
-# Do we need a travel state 
+    while stack.size > 0:
+        current_node = stack.pop()
+
+        if current_node not in visited:
 
 
-traversal_path = []
+
+
 
 
 
