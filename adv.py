@@ -70,7 +70,9 @@ traversal_path = []
 # create a variable called visited and assign set() to it so we can call visited nodes
 # Loop through our stack = ps: the nodes that are being iterated through 
 # creating a varibale called current_node so once we are on our current node we can pop() it from our stack
-# 
+# we want to add current node to our visited set 
+# then create a varibale that's qeual to our empty list (traversal_path) with our current_nodde in it ~ this allows us to take from our already looped node and pop it off the stack and out it into our list (traversal_path) to keep track of
+# if our neighbor_node is in our list push that node argument === (neighbor_node) back into our stack to loop through back to the top
 
 def dft(self, starting_node):
     stack = Stack() 
@@ -83,6 +85,14 @@ def dft(self, starting_node):
         current_node = stack.pop()
 
         if current_node not in visited:
+            # print(current_node)
+            visited.add(current_node)
+
+            neighbors = self.traversal_path(current_node)
+
+            for neighbor_node in neighbors:
+                stack.push(neighbor_node)
+
 
 
 
