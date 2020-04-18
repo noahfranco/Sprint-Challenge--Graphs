@@ -27,10 +27,26 @@ player = Player(world.starting_room)
 
 # Fill this out with directions to walk
 # traversal_path = ['n', 'n']
+
+# *** understand ***
+# I need to to find the current room
+
+# I am going to use depth-first traversal (dft) to loop through our rooms 
+
+# Once we hit a dead end 
+
+# I want to find the closes room that hasn’t been loop through using bfs from that dead end node
+
+# Do we need a travel state 
+
+
 traversal_path = []
 
 
 
+
+
+# Do not touch what's other it's just test's
 # TRAVERSAL TEST
 visited_rooms = set()
 player.current_room = world.starting_room
