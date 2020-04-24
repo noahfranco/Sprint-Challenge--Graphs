@@ -5,37 +5,9 @@ from world import World
 import random
 from ast import literal_eval
 
+
 # Load world
 world = World()
-
-# our Stack for our dft
-class Stack():
-    def __init__(self):
-        self.stack = []
-    def push(self, value):
-        self.stack.append(value)
-    def pop(self):
-        if self.size() > 0:
-            return self.stack.pop()
-        else:
-            return None
-    def size(self):
-        return len(self.stack)
-
-# our Queue for our bfs
-class Queue():
-    def __init__(self):
-        self.queue = []
-    def enqueue(self, value):
-        self.queue.append(value)
-    def dequeue(self):
-        if self.size() > 0:
-            return self.queue.pop(0)
-        else:
-            return None
-    def size(self):
-        return len(self.queue)
-
 
 # You may uncomment the smaller graphs for development and testing purposes.
 # map_file = "maps/test_line.txt"
@@ -57,47 +29,75 @@ player = Player(world.starting_room)
 # traversal_path = ['n', 'n']
 traversal_path = []
 
-# *** understand ***
-# I need to to find the current room
-# I am going to use depth-first traversal (dft) to iterate through our rooms 
-# Once we hit a node with a dead end I want to pop() of the top of the stack wwitch are the nodes that have already been loop through back to the begining of the stack (the first node I loop through) 
-# I want to find the closes room that hasn’t been iterate through using bfs from that first node (the current node we are on)
 
-# *** Plan ***
-# Create a dft function 
-# Create a stack to add our nodes that are being iterated through into
-# Push our starting node since we've been to it into the stack
-# create a variable called visited and assign set() to it so we can call visited nodes
-# Loop through our stack = ps: the nodes that are being iterated through 
-# creating a varibale called current_node so once we are on our current node we can pop() it from our stack
-# we want to add current node to our visited set 
-# then create a varibale that's qeual to our empty list (traversal_path) with our current_nodde in it ~ this allows us to take from our already looped node and pop it off the stack and out it into our list (traversal_path) to keep track of
-# if our neighbor_node is in our list push that node argument === (neighbor_node) back into our stack to loop through back to the top
-
-def dft(self, starting_node):
-    stack = Stack() 
-    
-    stack.push(starting_node)
-
+def next_path(starting_room, all_rooms=set()):
     visited = set()
 
-    while stack.size > 0:
-        current_node = stack.pop()
+    for room in all_rooms:  # for our rooms in our graph
+        visited.add(room) # add first room to out set()
+        path = [] # empty list that will be appended with out path
+        opposite = {'n': 's', 'e': 'w', 's': 'n', 'w': 'e'} # directions we can move in the graph
 
-        if current_node not in visited:
-            # print(current_node)
-            visited.add(current_node)
+        def add_to_path(r, back_to=None):
+            visited.add(r) # visited room is assigned to out set()
+            exits = r.get_exits() # exit variable to allow us to call when we want to exit a room/node
 
-            neighbors = self.traversal_path(current_node)
-
-            for neighbor_node in neighbors:
-                stack.push(neighbor_node)
-
-
-
+            for direction in exits:
+                # print(direction)
+                if r.get_room_in_direction(direction) not in visited: # if a room has not been visited too
+                    path.append(direction) # append to that direction to find the room that has not beene visited yet
+                    add_to_path(r.get_room_in_direction(direction), opposite[direction]) # our funciotn will reloop beacuse of the our recursive call and we are getting n, s, e, w directions 
 
 
+            if back_to: # if the room is None
+                path.append(back_to) # back track in our path to our next path
 
+        add_to_path(starting_room) # go back on our graph to the next branch of the graph and go through the process again
+
+        return path # return our path
+
+
+def create_path(starting_room, visited=set()):
+    path = []
+    opposite = {'n': 's', 'e': 'w', 's': 'n', 'w': 'e'} # directions we can move in the graph
+
+    def add_to_path(room, back_to=None):
+        visited.add(room)  # visited room is assigned to out set()
+        exits = room.get_exits() # exit variable to allow us to call when we want to exit a room/node
+        path_length = {} # to get the amount of rooms. Note: set key == direction and value == the len() of the rooms we've looped through
+        traverse_order = [] 
+
+        # print("show traverse order as empty", traverse_order)
+
+        for direction in exits:
+            # print(direction)
+            path_length[direction] = len(next_path(room.get_room_in_direction(direction), visited)) # for every direction that goes into the room we are going to check the path len() and put the direction into our path_length. Then we will call next_path recurslily to get the all of the possible directions we can go then we call visited to to see all the room we have visited and take them out of the possible directions we can go
+
+
+        for key, value in sorted(path_length.items(), key=lambda val: val[1]): # we are looping through the key and value and creating an anonymous funciton and that annnymous is going to go through our path and sort the len() of all the rooms  
+            # print("this is the len of our path", key, value)
+            print(key, value) # print key so we can see our direction and the len of the graph we are in
+            traverse_order.append(key) # adding the direction I'm going to the traverse_order list
+
+            # print(" my traverse order list", traverse_order)
+
+        for direction in traverse_order: # loop through the direcitons in the traverse order list
+            # print(direction)
+            if room.get_room_in_direction(direction) not in visited: # if a room has not been visited too
+                path.append(direction) # append to that direction to find the room that has not beene visited yet
+                add_to_path(room.get_room_in_direction(direction), opposite[direction]) # our funciotn will reloop beacuse of the our recursive call and we are getting n, s, e, w directions 
+
+        if len(visited) == len(world.rooms): # if the len() of the rooms we've been too is equal to the rooms in the graph
+            return 
+        elif back_to: # else if the room is None
+            path.append(back_to) # back track in our path to our next path
+
+    add_to_path(starting_room) # go back on our graph to the next branch of the graph and go through the process again
+
+    return path # return our path
+
+
+traversal_path = create_path(world.starting_room) # we are recursivly calling our funciton so we can repeat the process and move back to our starting_room/node
 
 
 
